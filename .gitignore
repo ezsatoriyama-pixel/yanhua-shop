@@ -52,3 +52,5 @@ tunnel.out
 daemon.log
 daemon.out
 daemon.err
+
+.tunnel-history.txt
