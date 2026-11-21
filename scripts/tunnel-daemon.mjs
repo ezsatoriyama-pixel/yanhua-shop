@@ -40,11 +40,16 @@ async function webAlive() {
   }
 }
 
-/** 检查公网地址是否真的可达 */
+/** 检查公网地址是否真的可达。
+ *
+ * ⚠️ 新建的 quick tunnel 需要 10~25 秒才在 Cloudflare 边缘生效，
+ *    这段时间访问会返回 502/530。如果检测太急，会把"还没生效"
+ *    误判成"已失效"，导致不停重建新地址（实测发生过：连建 3 次）。
+ *    因此这里给足超时，并允许连续失败 2 次才判定失效。 */
 async function publicAlive(url) {
   try {
     const r = await fetch(`${url}/api/health`, {
-      signal: AbortSignal.timeout(12000),
+      signal: AbortSignal.timeout(20000),
     });
     return r.ok;
   } catch {
@@ -125,42 +130,70 @@ function startTunnel() {
 
 async function healthLoop() {
   log("守护启动");
+
+  let failStreak = 0;
+  let urlBornAt = 0;
+
   while (true) {
-    const alive = await webAlive();
-    if (!alive) {
-      log("⚠️ 本地网站无响应，等待 15 秒后重试（请确认 npm run start 在跑）");
+    // ── 本地网站是否活着 ──
+    if (!(await webAlive())) {
+      log("⚠️ 本地网站无响应，等待 15 秒（请确认 npm run start 在跑）");
       await sleep(15000);
       continue;
     }
 
-    const ok = currentUrl ? await publicAlive(currentUrl) : false;
-    if (ok) {
-      log(`✓ 隧道正常 ${currentUrl}`);
+    // ── 没有地址：直接建 ──
+    if (!currentUrl) {
+      const url = await startTunnel();
+      if (url) {
+        currentUrl = url;
+        urlBornAt = Date.now();
+        failStreak = 0;
+        writeFileSync(URL_FILE, url + "\n", "utf8");
+        try {
+          appendFileSync(HISTORY, `${new Date().toISOString()}\t${url}\n`, "utf8");
+        } catch {
+          /* ignore */
+        }
+        restartCount++;
+        log(`✅ 新地址: ${url}（第 ${restartCount} 次建立）`);
+      } else {
+        log("❌ 建隧道失败，60 秒后重试");
+        await sleep(60000);
+      }
+      await sleep(10000);
+      continue;
+    }
+
+    // ── 有地址：检查可达性 ──
+    // 新地址有 30 秒宽限期，不判定失效（边缘生效需要时间）
+    const ageMs = Date.now() - urlBornAt;
+    if (ageMs < 30000) {
+      await sleep(10000);
+      continue;
+    }
+
+    if (await publicAlive(currentUrl)) {
+      if (failStreak > 0) log("✓ 隧道恢复正常");
+      failStreak = 0;
       await sleep(45000);
       continue;
     }
 
-    log(`✗ 隧道不可用（${currentUrl ?? "无地址"}），重建中…`);
+    failStreak++;
+    // 连续失败 2 次（即至少约 2 分钟不可达）才重建，避免抖动导致地址乱变
+    if (failStreak < 2) {
+      log(`⚠️ 检测失败 ${failStreak}/2，稍后复查（避免误判）`);
+      await sleep(20000);
+      continue;
+    }
+
+    log(`✗ 隧道确认失效（连续 ${failStreak} 次），重建中…`);
     stopTunnel();
     await sleep(3000);
-
-    restartCount++;
-    const url = await startTunnel();
-    if (url) {
-      currentUrl = url;
-      writeFileSync(URL_FILE, url + "\n", "utf8");
-      try {
-        appendFileSync(HISTORY, `${new Date().toISOString()}\t${url}\n`, "utf8");
-      } catch {
-        /* ignore */
-      }
-      log(`✅ 新地址: ${url}（第 ${restartCount} 次重建）`);
-    } else {
-      log("❌ 重建失败，60 秒后重试");
-      currentUrl = null;
-      await sleep(60000);
-    }
-    await sleep(8000);
+    currentUrl = null;
+    failStreak = 0;
+    await sleep(2000);
   }
 }
 
