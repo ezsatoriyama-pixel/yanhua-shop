@@ -45,3 +45,6 @@ tunnel-*.log.err
 .tunnel-url.txt
 startup.log
 cloudflared.exe
+
+tunnel.log
+tunnel.out
