@@ -54,3 +54,8 @@ daemon.out
 daemon.err
 
 .tunnel-history.txt
+.neon-conn.env
+.vercel-env.txt
+.vercel-env-paste.txt
+.vercel-url.txt
+scripts/vercel-*.mjs
