@@ -1,0 +1,6 @@
+DATABASE_URL=postgresql://neondb_owner:npg_nT7faS6wDQPM@ep-misty-base-b30o11ne-pooler.c-4.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&pgbouncer=true&connection_limit=1
+DIRECT_URL=postgresql://neondb_owner:npg_nT7faS6wDQPM@ep-misty-base-b30o11ne.c-4.ap-southeast-1.aws.neon.tech/neondb?sslmode=require
+AUTH_SECRET=N4hZxAHaG+HDCPSRdtGuuLH7vQSI/4liWC802nHFdf0=
+AUTH_TRUST_HOST=true
+ADMIN_EMAILS=1232456
+NEXT_PUBLIC_STORE_NAME=长夜烟花
