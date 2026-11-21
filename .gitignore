@@ -48,3 +48,7 @@ cloudflared.exe
 
 tunnel.log
 tunnel.out
+
+daemon.log
+daemon.out
+daemon.err

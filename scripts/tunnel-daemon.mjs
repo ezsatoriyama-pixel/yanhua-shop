@@ -133,6 +133,7 @@ async function healthLoop() {
 
   let failStreak = 0;
   let urlBornAt = 0;
+  let lastBeatAt = 0;
 
   while (true) {
     // ── 本地网站是否活着 ──
@@ -176,6 +177,11 @@ async function healthLoop() {
     if (await publicAlive(currentUrl)) {
       if (failStreak > 0) log("✓ 隧道恢复正常");
       failStreak = 0;
+      // 每分钟写一次心跳，便于区分"正常静默"与"进程挂起"
+      if (Date.now() - lastBeatAt > 60000) {
+        lastBeatAt = Date.now();
+        log(`✓ 心跳正常 ${currentUrl}`);
+      }
       await sleep(45000);
       continue;
     }
