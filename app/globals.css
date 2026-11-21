@@ -1,0 +1,125 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────────────────────
+   Apple 风格设计令牌
+   参考 apple.com：系统字体、#f5f5f7 浅灰面板、极细分割线、
+   近乎无边框（靠留白与背景色分层）、单一强调色 Apple 蓝。
+   ───────────────────────────────────────────────────────────── */
+@theme {
+  /* 背景层 */
+  --color-canvas: #ffffff;
+  --color-surface: #f5f5f7; /* Apple 标志性浅灰 */
+  --color-surface-2: #fbfbfd;
+
+  /* 文字层 */
+  --color-ink: #1d1d1f; /* 近黑，Apple 正文主色 */
+  --color-ink-2: #6e6e73; /* 次级灰 */
+  --color-ink-3: #86868b; /* 三级灰 */
+
+  /* 分隔线：Apple 用 1px 极浅灰，而不是卡片描边 */
+  --color-hairline: #d2d2d7;
+
+  /* 强调色 */
+  --color-accent: #0071e3;
+  --color-accent-hover: #0077ed;
+  --color-danger: #d70015;
+  --color-success: #008a3e;
+  --color-warn: #bf4800;
+
+  --radius-apple: 18px;
+  --radius-pill: 980px;
+}
+
+/* ── 字体：Apple 官网在 macOS/iOS 上用的就是系统字体 SF Pro，
+      这里用系统字体栈，Windows 自动回落到 Segoe UI，无需外链字体 ── */
+@theme {
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+    "Helvetica Neue", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+    Arial, sans-serif;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Apple 使用 -0.01em 级别的全局字距收紧 */
+  letter-spacing: -0.01em;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+/* 大标题紧字距 —— Apple 标题的字距通常在 -0.02em ~ -0.03em */
+.tracking-display {
+  letter-spacing: -0.022em;
+  line-height: 1.08;
+}
+
+.tracking-headline {
+  letter-spacing: -0.016em;
+  line-height: 1.15;
+}
+
+/* 数字等宽，金额与数量对齐不跳动 */
+.tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* 底部导航占位，避免内容被固定栏遮住 */
+.pb-safe {
+  padding-bottom: calc(env(safe-area-inset-bottom) + 4.5rem);
+}
+
+/* Apple 式按压反馈：轻微缩放，不加阴影 */
+.press {
+  transition:
+    transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.2s ease,
+    background-color 0.2s ease;
+}
+.press:active {
+  transform: scale(0.975);
+}
+
+/* 隐藏横向滚动条但保留滚动能力 */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* 入场动画：Apple 常用极短的上移淡入 */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.rise {
+  animation: rise 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise {
+    animation: none;
+  }
+  .press:active {
+    transform: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}

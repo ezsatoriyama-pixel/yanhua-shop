@@ -1,0 +1,335 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// Prisma schema —— 点单式自营商品网站
+// 设计要点：
+//  1. 金额一律 Int（分），禁用 Float，避免浮点误差
+//  2. SKU 规格用 specKey 归一化字符串做唯一锚点（不是三表规范化）
+//  3. CartItem / OrderItem 全部存快照，商品改价不影响历史
+//  4. Order.requestId 唯一索引即幂等锁
+//  5. 软删除靠 status / isActive，不物理删除，保护历史订单可渲染
+// ─────────────────────────────────────────────────────────────────────────────
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ───────────────────────────── 枚举 ─────────────────────────────
+
+enum ProductStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
+
+enum FulfillmentType {
+  PICKUP
+  DELIVERY
+}
+
+enum Role {
+  CUSTOMER
+  ADMIN
+}
+
+// ───────────────────────────── 商品 ─────────────────────────────
+
+model Category {
+  id        String    @id @default(cuid())
+  name      String
+  slug      String    @unique
+  sortOrder Int       @default(0)
+  isActive  Boolean   @default(true)
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([isActive, sortOrder])
+}
+
+model Product {
+  id          String        @id @default(cuid())
+  slug        String        @unique
+  title       String
+  subtitle    String?
+  description String?       @db.Text
+  coverImage  String
+  categoryId  String?
+  category    Category?     @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  status      ProductStatus @default(DRAFT)
+  sortOrder   Int           @default(0)
+
+  /// 冗余字段：最低 SKU 价格（分）。唯一写入口是后台保存时用 MIN(sku.priceCents) 重算，
+  /// 仅在列表页展示「起售价」用，禁止在读取路径写入。
+  minPriceCents Int @default(0)
+
+  /// 规格组的有序定义：[{ name: "尺寸", values: ["500g","1000g"] }, ...]
+  /// 为什么需要它：Sku.optionValues 存的是 Postgres jsonb，
+  /// jsonb 会按 key 长度/字典序重排，**无法依赖其插入顺序**做展示排序。
+  /// 因此规格组的顺序与组内取值顺序必须显式存在这里。
+  specGroups Json?
+
+  skus       Sku[]
+  orderItems OrderItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status, categoryId, sortOrder])
+}
+
+model Sku {
+  id       String  @id @default(cuid())
+  productId String
+  product  Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  /// 店主自己的货号，可空
+  skuCode String? @unique
+
+  /// 归一化组合键，如 "口味:原味|尺寸:500g"。生成规则见 lib/sku.ts，
+  /// 前端与服务端必须调用同一个函数，保证 hashing 一致。
+  specKey String
+
+  /// 展示用规格文字，如 "500g / 原味"
+  specText String
+
+  /// 结构化规格值，如 {"尺寸":"500g","口味":"原味"}
+  optionValues Json
+
+  /// 单价（分）
+  priceCents     Int
+  /// 划线价（分），可空
+  compareAtCents Int?
+
+  /// 库存以 SKU 为单位，0 即不可售
+  stock     Int     @default(0)
+  image     String?
+  isActive  Boolean @default(true)
+  sortOrder Int     @default(0)
+
+  cartItems  CartItem[]
+  orderItems OrderItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([productId, specKey])
+  @@index([productId, isActive])
+}
+
+// ───────────────────────── 用户与认证 ─────────────────────────
+// 采用 NextAuth (Auth.js) + Prisma Adapter 标准模型，
+// 不用 Supabase Auth：避免用户数据分裂在 auth.users 与 public schema 两处。
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  phone         String?   @unique
+  image         String?
+  /// Credentials 登录用；OAuth 用户为空
+  passwordHash  String?
+  role          Role      @default(CUSTOMER)
+
+  accounts  Account[]
+  sessions  Session[]
+  cartItems CartItem[]
+  orders    Order[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expires      DateTime
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ───────────────────────────── 购物车 ─────────────────────────────
+
+model CartItem {
+  id String @id @default(cuid())
+
+  /// 游客身份：cookie 中的 sid
+  sessionId String?
+  /// 登录身份
+  userId    String?
+  user      User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  skuId String
+  sku   Sku    @relation(fields: [skuId], references: [id], onDelete: Cascade)
+
+  quantity Int
+
+  // ── 快照：加入购物车瞬间锁定，不随商品改价变化 ──
+  priceSnapshotCents Int
+  nameSnapshot       String
+  specTextSnapshot   String
+  imageSnapshot      String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  /// 同一身份下同一 SKU 只有一行
+  @@unique([sessionId, skuId])
+  @@unique([userId, skuId])
+  @@index([sessionId])
+  @@index([userId])
+}
+
+// ───────────────────────────── 订单 ─────────────────────────────
+
+model Order {
+  id      String      @id @default(cuid())
+  /// 人可读订单号，如 20261118-0007
+  orderNo String      @unique
+  status  OrderStatus @default(PENDING)
+
+  fulfillmentType FulfillmentType @default(PICKUP)
+
+  // ── 归属 ──
+  userId    String?
+  user      User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+  /// 游客单归属凭证
+  sessionId String?
+  guestName String?
+  guestPhone String?
+  guestEmail String?
+
+  // ── 金额（分） ──
+  itemsTotalCents  Int
+  deliveryFeeCents Int @default(0)
+  totalCents       Int
+
+  remark String?
+
+  // ── 自取快照（P0） ──
+  pickupNo             String?
+  pickupDate           DateTime? @db.Date
+  pickupSlotStart      DateTime?
+  pickupSlotEnd        DateTime?
+  storeNameSnapshot    String?
+  storeAddressSnapshot String?
+  storePhoneSnapshot   String?
+
+  // ── 快递快照（P1 预留，P0 恒为 null） ──
+  receiverName    String?
+  receiverPhone   String?
+  receiverAddress Json?
+
+  /// 幂等键：客户端每次结算生成一次 UUID，唯一索引防重复下单
+  requestId String @unique
+
+  items OrderItem[]
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  confirmedAt DateTime?
+  completedAt DateTime?
+  cancelledAt DateTime?
+  cancelReason String?
+
+  @@index([userId, createdAt])
+  @@index([sessionId, createdAt])
+  @@index([status, createdAt])
+}
+
+model OrderItem {
+  id      String @id @default(cuid())
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  /// 故意可空：SKU 被删除后历史订单仍靠快照完整渲染
+  skuId     String?
+  sku       Sku?    @relation(fields: [skuId], references: [id], onDelete: SetNull)
+  productId String?
+  product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  // ── 快照：下单瞬间冻结 ──
+  nameSnapshot     String
+  specTextSnapshot String
+  imageSnapshot    String?
+  unitPriceCents   Int
+  quantity         Int
+  lineTotalCents   Int
+
+  @@index([orderId])
+}
+
+// ──────────────────── 取餐号 / 时段 / 门店 ────────────────────
+
+/// 按日自增序列，key 形如 "pickup:2026-11-18"
+model DailyCounter {
+  key   String @id
+  value Int    @default(0)
+}
+
+model PickupSlot {
+  id        String   @id @default(cuid())
+  date      DateTime @db.Date
+  startTime String
+  endTime   String
+  /// null = 不限量；有值则硬性卡住，防超卖时段
+  capacity  Int?
+  booked    Int      @default(0)
+  isActive  Boolean  @default(true)
+
+  @@unique([date, startTime])
+  @@index([date, isActive])
+}
+
+model Store {
+  id        String  @id @default(cuid())
+  name      String
+  address   String
+  phone     String
+  notice    String?
+  isActive  Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
