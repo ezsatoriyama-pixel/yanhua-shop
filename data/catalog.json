@@ -1,0 +1,313 @@
+{
+  "generatedAt": "2026-11-22T04:55:51.957Z",
+  "store": {
+    "name": "长夜烟花",
+    "address": "示例市示例区示例路 88 号 1 层",
+    "phone": "000-0000-0000",
+    "notice": "需实名登记，请凭取货号领取。"
+  },
+  "categories": [
+    {
+      "id": "cmwq5858d0000up1s4meo9c82",
+      "name": "儿童烟花",
+      "slug": "kids"
+    },
+    {
+      "id": "cmwq5863q0001up1sugtfnevl",
+      "name": "手持烟花",
+      "slug": "handheld"
+    },
+    {
+      "id": "cmwq586uy0002up1s70yfj731",
+      "name": "组合礼盒",
+      "slug": "gift-box"
+    }
+  ],
+  "products": [
+    {
+      "id": "cmwq587cv0004up1sr11wajae",
+      "slug": "sparkler-30cm",
+      "title": "冷光仙女棒",
+      "subtitle": "冷光配方，烟少光稳",
+      "description": "冷光配方，燃烧温度低、烟量少，光色稳定不闪爆。适合室内外派对、拍摄补光。\n每包 10 支，点燃后请手持金属杆尾端，远离可燃物。",
+      "coverImage": "/placeholder.svg",
+      "sortOrder": 1,
+      "category": {
+        "name": "手持烟花",
+        "slug": "handheld"
+      },
+      "specGroups": [
+        {
+          "name": "长度",
+          "values": [
+            "30cm",
+            "45cm"
+          ]
+        },
+        {
+          "name": "包装",
+          "values": [
+            "10支装",
+            "20支装"
+          ]
+        }
+      ],
+      "skus": [
+        {
+          "id": "cmwq5881d0006up1s4o112hpe",
+          "specKey": "包装:10支装|长度:30cm",
+          "specText": "30cm / 10支装",
+          "optionValues": {
+            "包装": "10支装",
+            "长度": "30cm"
+          },
+          "priceCents": 1200,
+          "stock": 120,
+          "image": null
+        },
+        {
+          "id": "cmwq588kk0008up1s6p039i3p",
+          "specKey": "包装:20支装|长度:30cm",
+          "specText": "30cm / 20支装",
+          "optionValues": {
+            "包装": "20支装",
+            "长度": "30cm"
+          },
+          "priceCents": 2200,
+          "stock": 80,
+          "image": null
+        },
+        {
+          "id": "cmwq5893t000aup1sd4ll7xv4",
+          "specKey": "包装:10支装|长度:45cm",
+          "specText": "45cm / 10支装",
+          "optionValues": {
+            "包装": "10支装",
+            "长度": "45cm"
+          },
+          "priceCents": 1800,
+          "stock": 0,
+          "image": null
+        },
+        {
+          "id": "cmwq589ve000cup1s1q3nefde",
+          "specKey": "包装:20支装|长度:45cm",
+          "specText": "45cm / 20支装",
+          "optionValues": {
+            "包装": "20支装",
+            "长度": "45cm"
+          },
+          "priceCents": 3200,
+          "stock": 45,
+          "image": null
+        }
+      ],
+      "minPriceCents": 1200,
+      "inStock": true
+    },
+    {
+      "id": "cmwq58b6k000eup1s4v0zrz5r",
+      "slug": "ground-spinner",
+      "title": "地面旋转烟花",
+      "subtitle": "贴地旋转，低空安全",
+      "description": "放置于平整硬质地面上点燃，旋转上升后喷花。留存安全距离 3 米以上，儿童须成人陪同。\n每盒 6 枚。",
+      "coverImage": "/placeholder.svg",
+      "sortOrder": 2,
+      "category": {
+        "name": "儿童烟花",
+        "slug": "kids"
+      },
+      "specGroups": [
+        {
+          "name": "规格",
+          "values": [
+            "6枚装",
+            "12枚装"
+          ]
+        }
+      ],
+      "skus": [
+        {
+          "id": "cmwq58bol000gup1slsk86zz7",
+          "specKey": "规格:6枚装",
+          "specText": "6枚装",
+          "optionValues": {
+            "规格": "6枚装"
+          },
+          "priceCents": 2800,
+          "stock": 60,
+          "image": null
+        },
+        {
+          "id": "cmwq58cg2000iup1swy4jyj7v",
+          "specKey": "规格:12枚装",
+          "specText": "12枚装",
+          "optionValues": {
+            "规格": "12枚装"
+          },
+          "priceCents": 5200,
+          "stock": 30,
+          "image": null
+        }
+      ],
+      "minPriceCents": 2800,
+      "inStock": true
+    },
+    {
+      "id": "cmwq58cz4000kup1s4uqzqhqt",
+      "slug": "fountain-candle",
+      "title": "喷泉烟花",
+      "subtitle": "室内可用的低烟款",
+      "description": "低烟配方，喷花高度约 1 米，燃烧约 40 秒。适合生日蛋糕、聚会桌面摆放。\n需置于不可燃底座上使用，远离纸花与气球。",
+      "coverImage": "/placeholder.svg",
+      "sortOrder": 3,
+      "category": {
+        "name": "儿童烟花",
+        "slug": "kids"
+      },
+      "specGroups": [
+        {
+          "name": "尺寸",
+          "values": [
+            "小号",
+            "大号"
+          ]
+        },
+        {
+          "name": "颜色",
+          "values": [
+            "银色",
+            "金色"
+          ]
+        }
+      ],
+      "skus": [
+        {
+          "id": "cmwq58dh4000mup1secbwk6rw",
+          "specKey": "尺寸:小号|颜色:银色",
+          "specText": "小号 / 银色",
+          "optionValues": {
+            "尺寸": "小号",
+            "颜色": "银色"
+          },
+          "priceCents": 1500,
+          "stock": 40,
+          "image": null
+        },
+        {
+          "id": "cmwq58dwn000oup1s1jnpzrsr",
+          "specKey": "尺寸:小号|颜色:金色",
+          "specText": "小号 / 金色",
+          "optionValues": {
+            "尺寸": "小号",
+            "颜色": "金色"
+          },
+          "priceCents": 1500,
+          "stock": 35,
+          "image": null
+        },
+        {
+          "id": "cmwq58ekc000qup1so7z2wh6w",
+          "specKey": "尺寸:大号|颜色:银色",
+          "specText": "大号 / 银色",
+          "optionValues": {
+            "尺寸": "大号",
+            "颜色": "银色"
+          },
+          "priceCents": 2600,
+          "stock": 20,
+          "image": null
+        },
+        {
+          "id": "cmwq58fnl000sup1sjvna5exh",
+          "specKey": "尺寸:大号|颜色:金色",
+          "specText": "大号 / 金色",
+          "optionValues": {
+            "尺寸": "大号",
+            "颜色": "金色"
+          },
+          "priceCents": 2600,
+          "stock": 18,
+          "image": null
+        }
+      ],
+      "minPriceCents": 1500,
+      "inStock": true
+    },
+    {
+      "id": "cmwq58g86000uup1s4bxb06bi",
+      "slug": "safety-kit",
+      "title": "点火套装",
+      "subtitle": "长杆点火器 + 防护手套",
+      "description": "长杆点火器 1 支、阻燃手套 1 副。长杆设计保持安全距离，是燃放烟花的推荐配件。",
+      "coverImage": "/placeholder.svg",
+      "sortOrder": 4,
+      "category": {
+        "name": "手持烟花",
+        "slug": "handheld"
+      },
+      "specGroups": null,
+      "skus": [
+        {
+          "id": "cmwq58gre000wup1sqswvlq0n",
+          "specKey": "default",
+          "specText": "",
+          "optionValues": {},
+          "priceCents": 3500,
+          "stock": 50,
+          "image": null
+        }
+      ],
+      "minPriceCents": 3500,
+      "inStock": true
+    },
+    {
+      "id": "cmwq58ir9000yup1s0m6mqolh",
+      "slug": "party-gift-box",
+      "title": "派对组合礼盒",
+      "subtitle": "一次配齐，适合生日与节庆",
+      "description": "含仙女棒、地面旋转、喷泉三类共 8 件，附点火器与使用说明卡。礼盒装，可直接送人。",
+      "coverImage": "/placeholder.svg",
+      "sortOrder": 5,
+      "category": {
+        "name": "组合礼盒",
+        "slug": "gift-box"
+      },
+      "specGroups": [
+        {
+          "name": "版本",
+          "values": [
+            "标准版",
+            "豪华版"
+          ]
+        }
+      ],
+      "skus": [
+        {
+          "id": "cmwq58jw60010up1s73as2lmc",
+          "specKey": "版本:标准版",
+          "specText": "标准版",
+          "optionValues": {
+            "版本": "标准版"
+          },
+          "priceCents": 8800,
+          "stock": 25,
+          "image": null
+        },
+        {
+          "id": "cmwq58koi0012up1sl7yyk2xg",
+          "specKey": "版本:豪华版",
+          "specText": "豪华版",
+          "optionValues": {
+            "版本": "豪华版"
+          },
+          "priceCents": 15800,
+          "stock": 10,
+          "image": null
+        }
+      ],
+      "minPriceCents": 8800,
+      "inStock": true
+    }
+  ]
+}

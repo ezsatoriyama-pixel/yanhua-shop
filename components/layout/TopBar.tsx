@@ -1,8 +1,8 @@
 import Link from "next/link";
 
 /**
- * 顶栏 —— Apple 官网导航的移动端形态：
- * 极矮（44px）、毛玻璃、无实心分割线、店名小巧不抢戏。
+ * 顶栏（静态展示版）
+ * 去掉了「查订单」——展示版没有订单功能，留着会是死链。
  */
 export function TopBar() {
   return (
@@ -13,12 +13,7 @@ export function TopBar() {
             长夜烟花
           </span>
         </Link>
-        <Link
-          href="/orders/lookup"
-          className="press rounded-pill px-3 py-1 text-[12px] text-ink-2 hover:text-ink"
-        >
-          查订单
-        </Link>
+        <span className="text-[11px] tracking-tight text-ink-3">展示版</span>
       </div>
     </header>
   );

@@ -1,11 +1,11 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { buildSpecKey, formatPrice, DEFAULT_SPEC_KEY } from "@/lib/sku";
 import type { SpecSelection } from "@/lib/sku";
-import { addToCart } from "@/app/actions/cart";
+import { addToCart } from "@/lib/cart-storage";
 
 export type SelectorSku = {
   id: string;
@@ -23,22 +23,23 @@ export type SpecGroup = {
 };
 
 /**
- * 规格选择器 —— Apple 官网「配置选项」的交互语言。
+ * 规格选择器（静态版）
  *
- * 视觉规则：
- *  - 未选中：白底 + 1px 极浅描边
- *  - 已选中：深色描边 + 浅灰底（Apple 用描边重量而非填充色表达选中）
- *  - 不可选：文字降到三级灰 + 删除线
- *  - 主按钮：Apple 蓝胶囊，全宽，44px 高（符合触控标准）
- *
- * 逻辑不变：用 buildSpecKey 在 Map 里 O(1) 命中唯一 SKU。
+ * 与数据库版的唯一区别：加入购物车写入 localStorage，不调 Server Action。
+ * 规格匹配逻辑完全保留：用 buildSpecKey 在 Map 里 O(1) 命中唯一 SKU。
  */
 export function SkuSelector({
   skus,
   groups,
+  productSlug,
+  productTitle,
+  coverImage,
 }: {
   skus: SelectorSku[];
   groups: SpecGroup[];
+  productSlug: string;
+  productTitle: string;
+  coverImage: string;
 }) {
   const isSingleSku = groups.length === 0;
   const singleSku = skus.find((s) => s.specKey === DEFAULT_SPEC_KEY) ?? skus[0];
@@ -48,7 +49,6 @@ export function SkuSelector({
     return {};
   });
   const [quantity, setQuantity] = useState(1);
-  const [pending, startTransition] = useTransition();
   const [message, setMessage] = useState<string | null>(null);
   const [messageKind, setMessageKind] = useState<"ok" | "error">("ok");
 
@@ -65,10 +65,7 @@ export function SkuSelector({
 
   const matched = currentKey ? (skuByKey.get(currentKey) ?? null) : null;
 
-  /**
-   * 某个规格值是否可选：把该值代入，其余未选组遍历所有取值，
-   * 只要有任一组合能命中 SKU 且有库存，就算这条路径可行。
-   */
+  /** 某规格值是否可选：代入后其余组遍历取值，有任一组合有货即可行 */
   function isValueAvailable(groupName: string, value: string): boolean {
     const base: SpecSelection = { ...selection, [groupName]: value };
     const unresolved = groups.filter((g) => !base[g.name]);
@@ -100,25 +97,26 @@ export function SkuSelector({
   }
 
   const soldOut = matched ? matched.stock <= 0 : false;
-  const canAdd = Boolean(matched) && !soldOut && !pending;
+  const canAdd = Boolean(matched) && !soldOut;
 
   function handleAdd() {
     if (!matched) return;
-    startTransition(async () => {
-      const result = await addToCart(matched.id, quantity);
-      if (result.ok) {
-        setMessageKind("ok");
-        setMessage("已加入购物车");
-      } else {
-        setMessageKind("error");
-        setMessage(result.message);
-      }
+    addToCart({
+      skuId: matched.id,
+      productSlug,
+      nameSnapshot: productTitle,
+      specTextSnapshot: matched.specText,
+      imageSnapshot: matched.image ?? coverImage,
+      priceSnapshotCents: matched.priceCents,
+      maxStock: matched.stock,
+      quantity,
     });
+    setMessageKind("ok");
+    setMessage(`已加入购物车（${quantity} 件）`);
   }
 
   return (
     <section>
-      {/* 规格组 */}
       {!isSingleSku && (
         <div className="space-y-6">
           {groups.map((group) => (
@@ -154,7 +152,6 @@ export function SkuSelector({
         </div>
       )}
 
-      {/* 选中结果：Apple 用一个大号价格 + 一行状态说明 */}
       <div className="mt-6 flex items-end justify-between border-t border-hairline/60 pt-5">
         <div>
           {matched ? (
@@ -176,28 +173,27 @@ export function SkuSelector({
           )}
         </div>
 
-        {/* 缩略图 */}
         {matched && (
           <div className="relative size-14 shrink-0 overflow-hidden rounded-xl bg-surface">
             <Image
-              src={matched.image || "/placeholder.svg"}
+              src={matched.image || coverImage}
               alt=""
               fill
               sizes="56px"
               className="object-cover"
+              unoptimized
             />
           </div>
         )}
       </div>
 
-      {/* 数量 */}
       <div className="mt-5 flex items-center justify-between">
         <span className="text-[13px] tracking-tight text-ink-2">数量</span>
         <div className="flex items-center gap-1">
           <button
             type="button"
             onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-            disabled={quantity <= 1 || pending}
+            disabled={quantity <= 1}
             className="press grid size-9 place-items-center rounded-full text-[17px] text-ink ring-1 ring-hairline disabled:text-ink-3/50 disabled:ring-hairline/50"
             aria-label="减少数量"
           >
@@ -208,10 +204,8 @@ export function SkuSelector({
           </span>
           <button
             type="button"
-            onClick={() =>
-              setQuantity((q) => Math.min(matched?.stock ?? 1, q + 1))
-            }
-            disabled={!matched || quantity >= matched.stock || pending}
+            onClick={() => setQuantity((q) => Math.min(matched?.stock ?? 1, q + 1))}
+            disabled={!matched || quantity >= matched.stock}
             className="press grid size-9 place-items-center rounded-full text-[17px] text-ink ring-1 ring-hairline disabled:text-ink-3/50 disabled:ring-hairline/50"
             aria-label="增加数量"
           >
@@ -220,20 +214,13 @@ export function SkuSelector({
         </div>
       </div>
 
-      {/* 主按钮：Apple 蓝胶囊 */}
       <button
         type="button"
         onClick={handleAdd}
         disabled={!canAdd}
         className="press mt-5 w-full rounded-pill bg-accent py-3.5 text-[15px] font-medium tracking-tight text-white hover:bg-accent-hover disabled:bg-surface disabled:text-ink-3"
       >
-        {pending
-          ? "处理中…"
-          : soldOut
-            ? "已售罄"
-            : !matched
-              ? "请选择规格"
-              : "加入购物车"}
+        {soldOut ? "已售罄" : !matched ? "请选择规格" : "加入购物车"}
       </button>
 
       {message && (
@@ -247,10 +234,10 @@ export function SkuSelector({
           <span>{message}</span>
           {messageKind === "ok" && (
             <Link
-              href="/cart"
+              href="/cart/"
               className="shrink-0 font-medium underline underline-offset-2"
             >
-              去结算
+              去看购物车
             </Link>
           )}
         </div>
