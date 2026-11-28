@@ -1,0 +1,40 @@
+1:"$Sreact.fragment"
+2:"/yanhua-shop/_next/static/chunks/3qfy96eoyh-ek.js"
+3:I[39756,["$2"],"default"]
+4:"/yanhua-shop/_next/static/chunks/35o_6l57emvl1.js"
+5:I[8821,["$2","$4"],"default"]
+6:I[37457,["$2"],"default"]
+a:"/yanhua-shop/_next/static/chunks/3o848x7c8s83-.js"
+b:"/yanhua-shop/_next/static/chunks/2k4ebvrj0_n2o.js"
+c:I[22016,["$2","$a","$b"],""]
+d:"$Sreact.suspense"
+18:"ViewportBoundary"
+19:I[97367,["$2"],"$18"]
+1a:"MetadataBoundary"
+1b:I[97367,["$2"],"$1a"]
+1c:I[27201,["$2"],"IconMark"]
+:HL["/yanhua-shop/_next/static/chunks/2jh_pcwg5rnl-.css","style"]
+8:X
+14:X
+14:C
+15:[["children",{"s":"__PAGE__","h":160,"d":{"r":"$L16","p":"$@17","v":null,"s":"$8"}}]]
+11:[["children",{"s":"cart","h":96,"d":{"r":"$L12","p":"$@13","v":"$14","s":"$8"},"c":"$Q15"}]]
+9:[["children",{"s":"(shop)","h":96,"d":{"r":["$","$1","c",{"children":[[["$","script","script-0",{"src":"/yanhua-shop/_next/static/chunks/3o848x7c8s83-.js","async":true}],["$","script","script-1",{"src":"/yanhua-shop/_next/static/chunks/2k4ebvrj0_n2o.js","async":true}]],["$","div",null,{"className":"mx-auto flex min-h-dvh w-full max-w-[680px] flex-col bg-canvas","children":[["$","header",null,{"className":"sticky top-0 z-40 border-b border-hairline/50 bg-canvas/80 backdrop-blur-xl","children":["$","div",null,{"className":"flex h-11 items-center justify-between px-5","children":[["$","$Lc",null,{"href":"/","className":"press flex items-center gap-2","children":["$","span",null,{"className":"text-[15px] font-semibold tracking-tight text-ink","children":"长夜烟花"}]}],["$","span",null,{"className":"text-[11px] tracking-tight text-ink-3","children":"展示版"}]]}]}],["$","main",null,{"className":"flex-1 pb-safe","children":["$","$L3",null,{"parallelRouterKey":"children","template":["$","$L6",null,{}],"notFound":[["$","div",null,{"className":"flex flex-col items-center justify-center px-6 py-28 text-center","children":[["$","p",null,{"className":"text-[13px] uppercase tracking-[0.1em] text-ink-3","children":"404"}],["$","p",null,{"className":"tracking-display mt-3 text-[26px] font-semibold text-ink","children":"此页面不存在"}],["$","p",null,{"className":"mt-2.5 max-w-[17rem] text-[13px] leading-relaxed tracking-tight text-ink-2","children":"商品可能已下架，或者链接有误。"}],["$","$Lc",null,{"href":"/","className":"press mt-7 rounded-pill bg-accent px-6 py-2.5 text-[14px] font-medium tracking-tight text-white hover:bg-accent-hover","children":"回到选购"}]]}],[]]}]}],["$","$d",null,{"fallback":["$","nav",null,{"aria-hidden":true,"className":"fixed inset-x-0 bottom-0 z-40 border-t border-hairline/60 bg-canvas/80 backdrop-blur-xl","style":{"paddingBottom":"env(safe-area-inset-bottom)"},"children":["$","ul",null,{"className":"mx-auto flex h-[52px] w-full max-w-[680px]","children":[["$","li","选购",{"className":"flex flex-1 flex-col items-center justify-center gap-[3px]","children":[["$","span",null,{"className":"size-[22px] rounded-md bg-surface"}],["$","span",null,{"className":"text-[10px] tracking-tight text-ink-3","children":"选购"}]]}],["$","li","购物车",{"className":"flex flex-1 flex-col items-center justify-center gap-[3px]","children":[["$","span",null,{"className":"size-[22px] rounded-md bg-surface"}],["$","span",null,{"className":"text-[10px] tracking-tight text-ink-3","children":"购物车"}]]}],["$","li","订单",{"className":"flex flex-1 flex-col items-center justify-center gap-[3px]","children":[["$","span",null,{"className":"size-[22px] rounded-md bg-surface"}],"$Le"]}]]}]}],"children":"$Lf"}]]}]]}],"p":"$@10","v":null,"s":"$8"},"c":"$Q11"}]]
+0:{"t":{"t":{"s":"","h":80,"d":{"r":["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/yanhua-shop/_next/static/chunks/2jh_pcwg5rnl-.css","precedence":"next"}],["$","script","script-0",{"src":"/yanhua-shop/_next/static/chunks/3qfy96eoyh-ek.js","async":true}]],["$","html",null,{"lang":"zh-CN","children":["$","body",null,{"className":"antialiased","children":["$","$L3",null,{"parallelRouterKey":"children","error":"$5","errorStyles":[],"errorScripts":[["$","script","script-0",{"src":"/yanhua-shop/_next/static/chunks/35o_6l57emvl1.js","async":true}]],"template":["$","$L6",null,{}],"notFound":[[["$","title",null,{"children":"404: This page could not be found."}],["$","div",null,{"style":{"fontFamily":"system-ui,\"Segoe UI\",Roboto,Helvetica,Arial,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\"","height":"100vh","textAlign":"center","display":"flex","flexDirection":"column","alignItems":"center","justifyContent":"center"},"children":["$","div",null,{"children":[["$","style",null,{"dangerouslySetInnerHTML":{"__html":"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}"}}],["$","h1",null,{"className":"next-error-h1","style":{"display":"inline-block","margin":"0 20px 0 0","padding":"0 23px 0 0","fontSize":24,"fontWeight":500,"verticalAlign":"top","lineHeight":"49px"},"children":404}],["$","div",null,{"style":{"display":"inline-block"},"children":["$","h2",null,{"style":{"fontSize":14,"fontWeight":400,"lineHeight":"49px","margin":0},"children":"This page could not be found."}]}]]}]}]],[]]}]}]}]]}],"p":"$@7","v":null,"s":"$8"},"c":"$Q9"},"h":{"r":["$","$1","h",{"children":[null,["$","$L19",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1, maximum-scale=1"}],["$","meta","2",{"name":"theme-color","content":"#ffffff"}]]}],["$","$L1b",null,{"children":[["$","div",null,{"hidden":true,"children":["$","$d",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"购物车 · 长夜烟花"}],["$","meta","1",{"name":"description","content":"选规格、看实时库存、预约取货时段。"}],["$","link","2",{"rel":"icon","href":"/yanhua-shop/favicon.ico?favicon.117ezoe8m31dk.ico","sizes":"48x48","type":"image/x-icon"}],["$","$L1c","3",{}]]}]}],null]}],null]}],"p":"$@1d","v":null,"s":"$8"}},"a":"$@1e","u":"$@1f","b":"dVSxPZ49gdz8r2-BRMnS2"}
+20:I[84927,["$2","$a","$b"],"BottomTabBar"]
+21:I[20748,["$2","$a","$b"],"CartClient"]
+22:I[97367,["$2"],"OutletBoundary"]
+e:["$","span",null,{"className":"text-[10px] tracking-tight text-ink-3","children":"订单"}]
+f:["$","$L20",null,{}]
+12:["$","$1","c",{"children":[null,["$","$L3",null,{"parallelRouterKey":"children","template":["$","$L6",null,{}]}]]}]
+16:["$","$1","c",{"children":[["$","div",null,{"children":[["$","header",null,{"className":"flex items-end justify-between px-5 pb-1 pt-8","children":[["$","h1",null,{"className":"tracking-display text-[28px] font-semibold text-ink","children":"购物车"}],["$","$Lc",null,{"href":"/","className":"press pb-1.5 text-[13px] tracking-tight text-accent","children":"继续选购"}]]}],["$","$d",null,{"fallback":null,"children":["$","$L21",null,{}]}]]}],null,["$","$L22",null,{"children":["$","$d",null,{"name":"Next.MetadataOutlet","children":"$@23"}]}]]}]
+8:300
+23:null
+1f:true
+8:C
+1e:0
+13:"$undefined"
+10:"$undefined"
+7:"$undefined"
+1d:"$undefined"
+17:"$undefined"
